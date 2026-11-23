@@ -5,7 +5,7 @@ Build the complete ANONYVERSE mobile application now using a fictional editorial
 
 Phase 1 must be a polished, functional mobile application, not a collection of static mockups. The application must include real navigation, reusable components, interactive saved-list and search/filter behavior, adaptive content details, profile/auth entry points, a provider-management surface, and a properly structured backend/database foundation. Demo data must be clearly labeled and replaceable through normalized internal models and provider adapters.
 
-The managed mobile runtime is Expo Router / React Native / TypeScript / NativeWind with the fixed Express/tRPC + Drizzle + managed MySQL-compatible database starter. The original request's Next.js/Tailwind/PostgreSQL/Supabase stack is treated as a future web/backend alternative, not a reason to replace the fixed mobile starter.
+The managed mobile runtime is Expo Router / React Native / TypeScript / NativeWind with the fixed Express/tRPC + Drizzle starter. The production backend uses Supabase Postgres through Drizzle's PostgreSQL dialect; the mobile app and website never connect directly to Supabase.
 
 ## Visual system
 Use a dark cinematic entertainment aesthetic with black, charcoal, deep navy and restrained Reel red / crimson accents. ANONYVERSE should feel premium, editorial and broad rather than a clone of any one streaming service. Use a full-bleed featured hero, poster rails, compact metadata, generous negative space, soft shadows, layered surfaces, clear live indicators and concise editorial copy. Portrait layouts are optimized for one-handed browsing; tablet/web preview can expand rails and spacing.

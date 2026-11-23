@@ -2,6 +2,8 @@
 
 The Framex integration is server-only. The Render API reads `FRAMEX_API_KEY` and returns only short-lived signed playback URLs to authenticated ANONYVERSE clients.
 
+The production database is Supabase Postgres. Render receives the Supabase `DATABASE_URL`; ANONYVERSE does not currently require Supabase client keys because it talks to the database through Drizzle on the server.
+
 ## Environment variables
 
 ```bash

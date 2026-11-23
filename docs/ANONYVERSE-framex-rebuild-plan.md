@@ -10,7 +10,7 @@ The preferred deployment split is:
 
 - **Vercel:** Next.js website and public SEO pages.
 - **Render:** Express/tRPC API, provider adapter, authentication/session endpoints, playback-session endpoints, background refresh/sync jobs, and admin operations.
-- **Database:** Keep the current Drizzle/MySQL-compatible model initially to avoid a needless migration. Use a managed production database reachable from Render.
+- **Database:** Use Supabase Postgres with Drizzle's PostgreSQL dialect. Render connects through the Supabase connection string; the application keeps database access server-side.
 - **Mobile:** Expo/React Native application distributed through EAS builds and the Apple App Store/Google Play. Mobile releases must remain explicit release operations; a Vercel deployment must never be treated as a mobile release.
 
 ## What Framex provides

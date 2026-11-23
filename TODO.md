@@ -1,6 +1,7 @@
 
 
 # ANONYVERSE provider and mobile release workflow
+- [~] **Supabase database migration:** Replace the MySQL Drizzle dialect and `mysql2` driver with PostgreSQL/`postgres-js`, preserve authentication/provider/release tables, generate a fresh Supabase baseline migration, and document Render `DATABASE_URL` setup. Supabase client keys remain unnecessary unless a future feature uses Supabase APIs.
 - [~] **Framex server-only playback slice:** Add a typed Framex adapter that uses `FRAMEX_API_KEY` only on the backend, preserves source-aware `contentId` references, exposes authenticated `playback.framexSession`, returns only short-lived playback data, rejects unapproved titles through a server-side allowlist, and documents the Render environment contract. Public playback remains disabled until provider rights are approved.
 - [~] **Secure provider management:** Admin-only procedures list provider records, store metadata and credential references, run server-side secret-presence health tests, record health/audit events, and block activation unless a provider is tested, approved and credentialed. Raw provider keys are never accepted by the mobile or website client.
 - [~] **Approved mobile release manifest:** The backend persists mobile release records and exposes only approved releases through `/api/releases/approved`; the website Download Centre consumes that manifest and shows no-release state until a signed artifact is approved.

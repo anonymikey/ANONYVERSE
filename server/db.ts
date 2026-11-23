@@ -1,5 +1,6 @@
 import { desc, eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { InsertUser, InsertMobileRelease, MobileRelease, adminAuditEvents, mobileReleases, providers, providerHealthChecks, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
@@ -9,7 +10,11 @@ let _db: ReturnType<typeof drizzle> | null = null;
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      const client = postgres(process.env.DATABASE_URL, {
+        max: Number(process.env.DB_POOL_MAX || 5),
+        prepare: false,
+      });
+      _db = drizzle(client);
     } catch {
       console.warn("[Database] Failed to connect");
       _db = null;
@@ -68,7 +73,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {
@@ -106,7 +112,8 @@ export async function getProviderByKey(providerKey: string) {
 export async function upsertProvider(input: typeof providers.$inferInsert) {
   const db = await getDb();
   if (!db) throw new Error("Database is not available");
-  await db.insert(providers).values(input).onDuplicateKeyUpdate({
+  await db.insert(providers).values(input).onConflictDoUpdate({
+    target: providers.providerKey,
     set: {
       name: input.name,
       category: input.category,

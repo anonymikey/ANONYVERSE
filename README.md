@@ -1,6 +1,6 @@
 # ANONYVERSE
 
-ANONYVERSE is a unified cinematic entertainment ecosystem with a managed Expo mobile app and a Next.js website in one compatibility monorepo.
+ANONYVERSE is a unified cinematic entertainment ecosystem with an Expo mobile app and a Next.js website in one compatibility monorepo. The production API runs on Render, the website runs on Vercel, and the application database is Supabase Postgres accessed server-side through Drizzle.
 
 ## Phase 2 workspace
 
