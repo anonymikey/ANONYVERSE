@@ -1,10 +1,11 @@
 import { z } from "zod";
 import { getSessionCookieName, getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { adminProcedure, publicProcedure, router } from "./_core/trpc";
+import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { providerCatalog } from "../lib/catalog";
 import { approvedReleases } from "../packages/shared/src/index";
 import { getProviderByKey, listApprovedReleases, listMobileReleases, listProviders, recordAdminAudit, recordProviderHealth, upsertMobileRelease, upsertProvider } from "./db";
+import { FramexApiError, framexAdapter } from "./providers/framex";
 
 const providerInput = z.object({
   providerKey: z.string().min(2).max(80),
@@ -53,6 +54,31 @@ export const appRouter = router({
       const saved = await upsertProvider({ ...provider, approvalStatus: input.approved ? "approved" : "pending", enabled: input.enabled, setupStatus: input.enabled ? "active" : provider.setupStatus, updatedAt: new Date() });
       await recordAdminAudit(ctx.user.id, input.enabled ? "provider.activated" : "provider.deactivated", provider.id, { approved: input.approved });
       return saved;
+    }),
+  }),
+  playback: router({
+    framexSession: protectedProcedure.input(z.object({
+      source: z.string().min(1).max(40),
+      contentId: z.string().min(1).max(160),
+      resolution: z.enum(["720", "1080"]).default("1080"),
+      language: z.string().min(1).max(16).optional(),
+      season: z.number().int().min(1).max(99).optional(),
+      episode: z.number().int().min(1).max(999).optional(),
+    })).mutation(async ({ input }) => {
+      try {
+        return await framexAdapter.createPlaybackSession(
+          { source: input.source, contentId: input.contentId },
+          {
+            resolution: input.resolution,
+            language: input.language,
+            season: input.season,
+            episode: input.episode,
+          },
+        );
+      } catch (error) {
+        if (error instanceof FramexApiError) throw new Error(error.message);
+        throw error;
+      }
     }),
   }),
   releases: router({

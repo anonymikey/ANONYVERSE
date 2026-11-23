@@ -40,7 +40,7 @@ export const catalog: ContentItem[] = [
 
 export const providerCatalog = [
   { id: "demo-catalog", category: "All categories", name: "ANONYVERSE Editorial Demo", status: "Active fallback", auth: "None", environment: "demo", approval: "Approved for demo only", docs: "Internal editorial catalogue" },
-  { id: "movie-provider", category: "Movies & TV", name: "Future movie provider", status: "Not configured", auth: "API key", environment: "development", approval: "Pending review", docs: "Add official documentation URL" },
+  { id: "framex", category: "Movies & TV", name: "Framex", status: "Server adapter installed · playback gated", auth: "X-API-Key", environment: "development", approval: "Pending rights review", docs: "https://framex.wolvarex.com/docs" },
   { id: "anime-provider", category: "Anime & manga", name: "Future anime provider", status: "Not configured", auth: "OAuth 2.0", environment: "development", approval: "Pending review", docs: "Add official documentation URL" },
   { id: "sports-provider", category: "Live sports", name: "Future sports provider", status: "Not configured", auth: "API key", environment: "development", approval: "Pending review", docs: "Add official documentation URL" },
   { id: "music-provider", category: "Music", name: "Future music provider", status: "Not configured", auth: "API key", environment: "development", approval: "Pending review", docs: "Add official documentation URL" },

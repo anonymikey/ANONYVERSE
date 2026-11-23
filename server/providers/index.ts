@@ -4,4 +4,6 @@ export type ProviderConfig = { providerKey: string; category: ProviderCategory; 
 export interface ContentProviderAdapter { readonly key: string; readonly category: ProviderCategory; healthCheck(config: ProviderConfig): Promise<{ ok: boolean; message: string }>; search(config: ProviderConfig, query: string): Promise<NormalizedProviderItem[]>; getDetails(config: ProviderConfig, id: string): Promise<NormalizedProviderItem | null>; }
 export class DemoEditorialAdapter implements ContentProviderAdapter { readonly key = "demo-editorial"; readonly category = "culture" as const; async healthCheck() { return { ok: true, message: "Fictional editorial catalogue active" }; } async search() { return []; } async getDetails() { return null; } }
 export function canCallProvider(config: ProviderConfig) { return config.enabled && config.approved && Boolean(config.credentialRef || config.providerKey === "demo-editorial"); }
-export const providerRegistry = { demo: new DemoEditorialAdapter() };
+import { framexAdapter } from "./framex";
+export { framexAdapter, FramexApiError, framexPlaybackEnabled } from "./framex";
+export const providerRegistry = { demo: new DemoEditorialAdapter(), framex: framexAdapter };
