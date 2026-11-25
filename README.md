@@ -1,24 +1,15 @@
 # ANONYVERSE
 
-ANONYVERSE is a unified cinematic entertainment ecosystem with an Expo mobile app and a Next.js website in one compatibility monorepo. The production API runs on Render, the website runs on Vercel, and the application database is Supabase Postgres accessed server-side through Drizzle.
+Static front-end (`index.html`) plus two Vercel Functions that keep `FRAMEX_API_KEY` on the server.
 
-## Phase 2 workspace
+- `GET /api/catalog?section=trending|popular-movies|popular-series|latest-movies|latest-series` or `?q=term`
+- `GET /api/stream?id=CONTENT_ID&resolution=1080[&se=1&ep=1][&download=1]` returns `{ url, expiresAt, expiresIn }`
 
-- The existing root Expo Router / React Native application remains Manus-canonical and keeps Expo 8081 plus API 3000.
-- `apps/web` is the responsive Next.js website and is prepared for Vercel with Root Directory `apps/web`.
-- `packages/shared`, `packages/validation` and `packages/config` hold shared normalized types, validation and brand/version constants.
-- `server/` and `drizzle/` remain the single backend/database foundation.
+## Deploy
+1. Push this folder to GitHub and import the repo in Vercel (Framework preset: Other, no build command).
+2. Add `FRAMEX_API_KEY` under Project Settings > Environment Variables, then redeploy.
+3. In the FRAMEX dashboard, bind the key to your site's registrable root domain (subdomains are included).
+   If you only use a `*.vercel.app` address, a custom domain is the safer choice.
 
-## Commands
-
-```bash
-pnpm dev                 # preserved mobile + API runtime
-pnpm check               # mobile/backend TypeScript
-pnpm lint                # mobile lint
-pnpm test                # backend tests
-pnpm --dir apps/web build # website production build
-```
-
-The website uses fictional, clearly labelled demo content. The public-apis repository is a discovery catalogue only. Real providers require independent official terms, licensing, credential, connection test and approval review. Provider credentials remain server-only.
-
-Production website deployment is handled by Vercel's Git integration. Native Android/iOS builds are never automatically published by a website commit; use an explicit Expo EAS or Manus Dashboard release action. See [deployment](docs/deployment.md) and [release workflow](docs/releases.md).
+## Local dev
+`npm i -g vercel`, copy `.env.example` to `.env.local`, then run `vercel dev`.
