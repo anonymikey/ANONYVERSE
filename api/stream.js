@@ -17,7 +17,7 @@ export async function GET(request) {
       se: num(p.get("se")),
       ep: num(p.get("ep")),
       download: p.get("download") === "1" ? "1" : undefined,
-    });
+    }, request);
     if (!s?.url) throw new HttpError(502, "No playback URL returned");
     return json({ url: s.url, expiresAt: s.expiresAt, expiresIn: s.expiresIn });
   } catch (e) {
