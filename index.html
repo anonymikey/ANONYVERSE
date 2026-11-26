@@ -3,209 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b0813">
-<title>ANONYVERSE</title>
-<style>
-:root{--bg:#f6f4fb;--surface:#fff;--ink:#16121f;--muted:#6b6580;--line:#e2deee;--accent:#7c3aed;--accent2:#ec4899;color-scheme:light dark}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0813;--surface:#151022;--ink:#f3f0fa;--muted:#9a93b3;--line:#2a2340;--accent:#a78bfa;--accent2:#f472b6}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:1rem;padding:.75rem clamp(1rem,4vw,3rem);backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--line)}
-.logo{font-weight:800;letter-spacing:.14em;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.search{flex:1;max-width:420px;margin-left:auto}
-input,select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:.5rem 1rem}
-.search input{width:100%}
-:is(input,select,button,.card):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.hero{position:relative;overflow:hidden;margin:clamp(1rem,3vw,2rem);padding:clamp(1.5rem,6vw,4rem);border-radius:24px;min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;gap:.75rem;color:#fff;background:linear-gradient(135deg,#2a1065,#0f0a24);isolation:isolate}
-.hero::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--hero,none) center/cover;filter:blur(28px) saturate(1.3);opacity:.45;scale:1.2}
-.hero h1{margin:0;font-size:clamp(2rem,6vw,3.6rem);line-height:1.05}
-.hero small{letter-spacing:.15em;opacity:.8}
-.btn{border:0;border-radius:99px;padding:.7rem 1.4rem;font:inherit;font-weight:600;cursor:pointer;background:#fff;color:#16121f;width:max-content}
-main{padding:0 clamp(1rem,4vw,3rem) 4rem}
-.chips{display:flex;gap:.5rem;flex-wrap:wrap;margin:1rem 0}
-.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:.35rem .9rem;border-radius:99px;font:inherit;font-size:.9rem;cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
-.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
-.card{all:unset;cursor:pointer;display:block;border-radius:16px;overflow:hidden;background:var(--surface);border:1px solid var(--line);transition:transform .2s,box-shadow .2s;animation:rise linear both;animation-timeline:view();animation-range:entry 0% entry 40%}
-.card:hover{transform:translateY(-4px);box-shadow:0 12px 30px color-mix(in srgb,var(--accent) 25%,transparent)}
-.card:focus-visible{outline:2px solid var(--accent)}
-@keyframes rise{from{opacity:0;translate:0 24px}to{opacity:1;translate:0 0}}
-.poster{aspect-ratio:2/3;width:100%;object-fit:cover;display:block;background:linear-gradient(160deg,var(--accent),var(--accent2))}
-.ph{aspect-ratio:2/3;display:grid;place-items:end start;padding:.8rem;font-weight:700;color:#fff;background:linear-gradient(160deg,var(--accent),#1b0f3d)}
-.meta{padding:.5rem .75rem .7rem;font-size:.85rem}
-.meta b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.meta span{color:var(--muted)}
-.sk{aspect-ratio:2/3.5;border-radius:16px;background:linear-gradient(90deg,var(--surface),var(--line),var(--surface));background-size:200% 100%;animation:sh 1.4s infinite}
-@keyframes sh{to{background-position:-200% 0}}
-#msg{color:var(--muted);padding:1.5rem 0}
-dialog{width:min(980px,96vw);border:1px solid var(--line);border-radius:20px;padding:0;background:var(--surface);color:var(--ink)}
-dialog::backdrop{background:#000a;backdrop-filter:blur(6px)}
-.stage{position:relative;aspect-ratio:16/9;background:#000}
-video{width:100%;height:100%;display:block}
-.status{position:absolute;inset:auto 0 0 0;padding:.5rem 1rem;font-size:.85rem;color:#fff;background:linear-gradient(transparent,#000c);pointer-events:none}
-#playBtn{position:absolute;inset:0;margin:auto;width:max-content;height:max-content}
-.info{padding:1rem 1.25rem;display:flex;gap:.75rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
-.info h3{margin:0}.info small{color:var(--muted)}
-.ctl{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
-.ctl input[type=number]{width:4.5rem}
-.x{border:1px solid var(--line);background:none;color:var(--ink);border-radius:99px;padding:.45rem .9rem;cursor:pointer;font:inherit}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style>
+<title>ANONYVERSE | Movies, Shows, Anime, Live TV &amp; Sports</title>
+<meta name="description" content="ANONYVERSE: stream movies, shows, anime, live TV and sports in one place.">
+<meta name="theme-color" content="#e50914">
+<meta property="og:title" content="ANONYVERSE">
+<meta property="og:description" content="Movies, shows, anime, live TV and sports in one place.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js" defer></script>
+<script src="/app.js" defer></script>
 </head>
 <body>
-<header>
-  <span class="logo">ANONYVERSE</span>
-  <label class="search"><input id="q" type="search" placeholder="Search movies and series ( / )" aria-label="Search"></label>
+<div id="splash" aria-hidden="true"><div><i></i><img src="/assets/logo.png" alt=""><b>ANONYVERSE</b></div></div>
+<aside class="side" id="side" aria-label="Main navigation">
+  <a class="brand" href="#home"><img src="/assets/logo.png" alt="ANONYVERSE"><b class="lbl">ANONYVERSE</b></a>
+  <nav class="nav" id="nav"></nav>
+  <div class="sfoot" id="sfoot"></div>
+</aside>
+<header class="top">
+  <img class="mlogo" src="/assets/logo.png" alt="ANONYVERSE" width="36" height="36">
+  <h1 id="title">Home</h1>
+  <div class="search" role="search"><span id="searchIco"></span>
+    <input id="q" type="search" placeholder="Search movies, shows, anime ( / )" aria-label="Search" aria-controls="sg" aria-autocomplete="list" autocomplete="off" enterkeyhint="search">
+    <button id="qx" aria-label="Clear search" hidden></button>
+    <div class="sg" id="sg" role="listbox" hidden></div></div>
 </header>
+<main id="view" aria-live="polite"></main>
+<footer class="foot" id="foot"></footer>
 
-<section class="hero" id="hero" hidden>
-  <small>FEATURED</small>
-  <h1 id="heroTitle"></h1>
-  <button class="btn" id="heroPlay">▶ Play now</button>
-</section>
-
-<main>
-  <div class="chips" id="chips" role="group" aria-label="Browse"></div>
-  <div class="grid" id="grid" aria-live="polite"></div>
-  <p id="msg"></p>
-</main>
-
-<dialog id="dlg" aria-label="Player">
+<dialog id="detail" aria-label="Details"><button class="dclose" id="dclose" aria-label="Close"></button><div id="dbox"></div></dialog>
+<dialog id="player" aria-label="Player">
   <div class="stage">
     <video id="vid" controls playsinline></video>
-    <button class="btn" id="playBtn" hidden>▶ Tap to play</button>
+    <iframe id="frm" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen hidden title="Live player"></iframe>
+    <div class="ld" id="ld"><div><span class="spin"></span><img src="/assets/logo.png" alt=""></div></div>
+    <button class="btn red" id="playBtn" hidden></button>
+    <button class="pxx" id="pxx" aria-label="Close player"></button>
     <div class="status" id="status" role="status"></div>
   </div>
-  <div class="info">
+  <div class="pinfo">
     <div><h3 id="pTitle"></h3><small id="pMeta"></small></div>
     <div class="ctl">
-      <span id="epCtl" hidden>
-        <input id="se" type="number" min="1" max="99" value="1" aria-label="Season"> 
-        <input id="ep" type="number" min="1" max="999" value="1" aria-label="Episode">
-      </span>
-      <select id="res" aria-label="Quality">
-        <option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p</option>
-      </select>
-      <button class="x" id="dl">Download</button>
+      <select id="res" aria-label="Quality"><option value="1080">1080p</option><option value="720">720p</option><option value="480">480p</option><option value="360">360p</option></select>
+      <button class="x" id="next" hidden>Next episode</button>
+      <button class="x" id="dl" hidden>Download</button>
       <button class="x" id="pip">PiP</button>
-      <button class="x" id="close">Close</button>
+      <a class="x" id="rep" href="https://t.me/ANONYMIKEY" target="_blank" rel="noopener">Report</a>
+      <button class="x" id="pclose">Close</button>
     </div>
   </div>
 </dialog>
-
-<script>
-const $ = s => document.querySelector(s);
-const grid=$("#grid"), q=$("#q"), msg=$("#msg"), dlg=$("#dlg"), vid=$("#vid"), statusEl=$("#status");
-const SECTIONS=[["trending","Trending"],["popular-movies","Popular movies"],["popular-series","Popular series"],["latest-movies","Latest movies"],["latest-series","Latest series"]];
-let section="trending", cur=null, refreshTimer=null, recovering=false, seq=0, failStreak=0, lastSave=0, heroItem=null;
-
-const isSeries = it => /series|tv|^2$/i.test(it?.type || "");
-const progKey = () => `anv:${cur.id}:${isSeries(cur) ? `${$("#se").value}-${$("#ep").value}` : "m"}`;
-const store = {
-  get(k){ try{ return Number(localStorage.getItem(k)) || 0 }catch{ return 0 } },
-  set(k,v){ try{ localStorage.setItem(k,v) }catch{} },
-  del(k){ try{ localStorage.removeItem(k) }catch{} }
-};
-
-/* ---------- Browse ---------- */
-function chips(){
-  const box=$("#chips");
-  SECTIONS.forEach(([id,label])=>{
-    const b=document.createElement("button");b.className="chip";b.textContent=label;b.setAttribute("aria-pressed",id===section);
-    b.onclick=()=>{ q.value=""; const go=()=>{section=id;[...box.children].forEach(c=>c.setAttribute("aria-pressed",c===b));load()};
-      document.startViewTransition?document.startViewTransition(go):go() };
-    box.append(b);
-  });
-}
-async function load(){
-  const my=++seq, term=q.value.trim();
-  msg.textContent=""; grid.innerHTML='<div class="sk"></div>'.repeat(10);
-  try{
-    const r=await fetch("/api/catalog?"+new URLSearchParams(term?{q:term}:{section}));
-    const d=await r.json().catch(()=>({}));
-    if(!r.ok) throw new Error(d.error||r.status);
-    if(my!==seq) return;
-    draw(d.items||[], term);
-  }catch(e){ if(my!==seq) return; grid.innerHTML=""; msg.textContent=`Couldn’t load titles (${e.message}).` }
-}
-function draw(items, term){
-  grid.innerHTML="";
-  msg.textContent=items.length?"":"No titles found.";
-  items.forEach(it=>{
-    const b=document.createElement("button");b.className="card";
-    let art;
-    if(it.poster){ art=new Image(); art.className="poster"; art.loading="lazy"; art.alt=""; art.referrerPolicy="no-referrer"; art.src=it.poster;
-      art.onerror=()=>{ const ph=document.createElement("div");ph.className="ph";ph.textContent=it.title;art.replaceWith(ph) } }
-    else { art=document.createElement("div"); art.className="ph"; art.textContent=it.title }
-    const m=document.createElement("div");m.className="meta";
-    const t=document.createElement("b");t.textContent=it.title;
-    const s=document.createElement("span");s.textContent=[it.year,isSeries(it)?"Series":"Movie"].filter(Boolean).join(" · ");
-    m.append(t,s);b.append(art,m);b.onclick=()=>openPlayer(it);grid.append(b);
-  });
-  const hero=$("#hero");
-  if(!term && items[0]){ heroItem=items[0]; $("#heroTitle").textContent=heroItem.title;
-    hero.style.setProperty("--hero",heroItem.poster?`url("${heroItem.poster}")`:"none"); hero.hidden=false }
-  else hero.hidden=true;
-}
-
-/* ---------- Player: signed URL refresh + resume recovery ---------- */
-async function fetchStream(extra={}){
-  const p=new URLSearchParams({id:cur.id,resolution:$("#res").value,...extra});
-  if(isSeries(cur)){ p.set("se",$("#se").value); p.set("ep",$("#ep").value) }
-  const r=await fetch("/api/stream?"+p,{cache:"no-store"});
-  const d=await r.json().catch(()=>({}));
-  if(!r.ok||!d.url) throw new Error(d.error||r.status);
-  return d;
-}
-async function refresh(resumeAt){
-  if(recovering||!cur) return;
-  recovering=true;
-  const position = resumeAt ?? (vid.currentTime||0);
-  const wasPlaying = resumeAt!=null ? true : !vid.paused;
-  statusEl.textContent="Loading stream…";
-  try{
-    const s=await fetchStream();
-    clearTimeout(refreshTimer);
-    // Refresh about 90 seconds before the 10-minute URL expires (minimum 30 seconds).
-    refreshTimer=setTimeout(()=>refresh(),Math.max(30,(s.expiresIn||600)-90)*1000);
-    vid.addEventListener("loadedmetadata",()=>{
-      if(position>0 && position<vid.duration-2) vid.currentTime=position;
-      if(wasPlaying) vid.play().catch(()=>{ $("#playBtn").hidden=false });
-      statusEl.textContent="";
-    },{once:true});
-    vid.src=s.url; vid.load();
-  }catch(e){ statusEl.textContent=`Couldn’t get a playback link (${e.message}). Press play to retry.` }
-  finally{ recovering=false }
-}
-function openPlayer(it){
-  cur=it; failStreak=0;
-  $("#pTitle").textContent=it.title;
-  $("#pMeta").textContent=[it.year,isSeries(it)?"Series":"Movie"].filter(Boolean).join(" · ");
-  $("#epCtl").hidden=!isSeries(it); $("#se").value=1; $("#ep").value=1; $("#playBtn").hidden=true;
-  dlg.showModal();
-  refresh(store.get(progKey()));
-}
-vid.addEventListener("error",()=>{
-  if(!cur||!vid.getAttribute("src")) return;
-  if(++failStreak>3){ statusEl.textContent="Playback keeps failing. Try another quality."; return }
-  refresh(); // expired URL after a long pause: fetch fresh link, restore currentTime
-});
-vid.addEventListener("playing",()=>{ failStreak=0; $("#playBtn").hidden=true; statusEl.textContent="" });
-vid.addEventListener("timeupdate",()=>{ if(!cur||Date.now()-lastSave<5000) return; lastSave=Date.now(); store.set(progKey(),vid.currentTime) });
-vid.addEventListener("ended",()=>{ if(cur) store.del(progKey()) });
-$("#playBtn").onclick=()=>{ $("#playBtn").hidden=true; vid.play().catch(()=>refresh()) };
-$("#res").onchange=()=>refresh();
-["#se","#ep"].forEach(s=>$(s).onchange=()=>{ vid.pause(); refresh(store.get(progKey())) });
-$("#dl").onclick=async()=>{ try{ const s=await fetchStream({download:"1"}); location.href=s.url }catch(e){ statusEl.textContent=`Download failed (${e.message}).` } };
-$("#pip").onclick=()=>document.pictureInPictureEnabled&&vid.requestPictureInPicture().catch(()=>{});
-dlg.addEventListener("close",()=>{ if(cur) store.set(progKey(),vid.currentTime); cur=null; clearTimeout(refreshTimer); vid.pause(); vid.removeAttribute("src"); vid.load() });
-$("#close").onclick=()=>dlg.close();
-dlg.addEventListener("click",e=>{ if(e.target===dlg) dlg.close() });
-
-$("#heroPlay").onclick=()=>heroItem&&openPlayer(heroItem);
-let debounce; q.addEventListener("input",()=>{ clearTimeout(debounce); debounce=setTimeout(load,400) });
-addEventListener("keydown",e=>{ if(e.key==="/"&&document.activeElement!==q&&!dlg.open){ e.preventDefault(); q.focus() } });
-chips(); load();
-</script>
 </body>
 </html>
