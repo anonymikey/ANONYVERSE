@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>ANONYVERSE Admin</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<style>
+:root{--bg:#0d0d10;--panel:#17171d;--line:#272730;--ink:#f4f4f6;--muted:#9c9ca8;--red:#e50914;--ok:#2ecc71;--warn:#f5a623;color-scheme:dark}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+input,select,textarea{background:#0f0f13;border:1px solid var(--line);border-radius:8px;padding:.5rem .7rem;width:100%}
+.btn{background:#ffffff14;border:1px solid var(--line);border-radius:8px;padding:.45rem .9rem;font-weight:600}.btn:hover{background:#ffffff22}
+.btn.red{background:var(--red);border-color:var(--red)}.btn.sm{padding:.25rem .6rem;font-size:.85rem}.btn.bad{color:#ff6b6b}
+#login{min-height:100dvh;display:grid;place-items:center;padding:1rem}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:1.6rem;width:min(400px,100%);display:grid;gap:.9rem;text-align:center}
+.box img{width:64px;height:64px;border-radius:14px;margin:0 auto}.err{color:#ff6b6b;min-height:1.4em;font-size:.9rem}
+header{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.2rem;border-bottom:1px solid var(--line);position:sticky;top:0;background:#0d0d10ee;backdrop-filter:blur(10px);z-index:5;flex-wrap:wrap}
+header img{width:32px;height:32px;border-radius:8px}header b{letter-spacing:.14em;color:var(--red)}
+nav{display:flex;gap:.3rem;flex-wrap:wrap;margin-left:1rem;flex:1}nav button{background:none;border:0;padding:.4rem .8rem;border-radius:8px;color:var(--muted)}nav button[aria-current=true]{background:#ffffff18;color:#fff}
+main{padding:1.2rem;max-width:1200px;margin:0 auto;display:grid;gap:1rem}
+.cards{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.c{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1rem}.c h3{margin:0 0 .5rem;font-size:1rem}.c .big{font-size:1.8rem;font-weight:800}
+.muted{color:var(--muted)}.sm{font-size:.85rem}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#666;margin-right:.4rem}.dot.up{background:var(--ok)}.dot.part{background:var(--warn)}.dot.down{background:#ff4d4d}
+.row{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}.row.sb{justify-content:space-between}
+table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{text-align:left;padding:.45rem .5rem;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:600}
+.scroll{overflow-x:auto}.tag{font-size:.72rem;padding:.1rem .5rem;border-radius:99px;border:1px solid var(--line);color:var(--muted)}.tag.ok{color:var(--ok);border-color:#2ecc7155}.tag.no{color:#ff6b6b;border-color:#ff6b6b55}
+.bars{display:flex;gap:.6rem;align-items:flex-end;height:120px}.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem;height:100%;justify-content:flex-end}
+.bar i{display:flex;align-items:flex-end;width:100%;max-width:46px;background:#e5091466;border-radius:6px 6px 0 0;min-height:2px}.bar i b{display:block;width:100%;background:#ff4d4d;border-radius:6px 6px 0 0}
+.warn{background:#f5a62318;border:1px solid #f5a62355;border-radius:12px;padding:.7rem 1rem;color:#ffd08a}
+dialog{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:16px;width:min(760px,96vw);max-height:92dvh;padding:1.2rem}dialog::backdrop{background:#000b}
+.form{display:grid;gap:.7rem}.g2{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}label small{color:var(--muted);margin-left:.4rem}
+pre{background:#0f0f13;border:1px solid var(--line);border-radius:10px;padding:.8rem;overflow:auto;max-height:340px;font-size:.8rem;margin:0}
+.ord{display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem;border:1px solid var(--line);border-radius:8px}
+#toast{position:fixed;left:50%;bottom:1.2rem;translate:-50% 0;background:#fff;color:#111;padding:.6rem 1.1rem;border-radius:10px;font-weight:600;z-index:50}
+@media (max-width:640px){main{padding:.8rem}nav{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<section id="login" hidden><form class="box" id="lf" autocomplete="off"><img src="/assets/logo.png" alt=""><h2 style="margin:0">Admin sign in</h2><p class="muted sm" style="margin:0">Enter the token you set as <b>ADMIN_TOKEN</b> in Vercel.</p>
+<input id="tok" type="password" placeholder="Admin token" autocomplete="current-password" required><button class="btn red" type="submit">Sign in</button><div class="err" id="lerr"></div></form></section>
+<div id="app" hidden>
+<header><img src="/assets/logo.png" alt=""><b>ANONYVERSE</b><span class="muted">Admin</span><nav id="nav"></nav><a class="btn sm" href="/" target="_blank">Open site</a><button class="btn sm" id="out">Sign out</button></header>
+<main id="main"></main>
+</div>
+<dialog id="dlg"></dialog><div id="toast" hidden></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let S={tab:"Overview",cfg:null,health:null,breaker:{},timer:null,ops:{},disc:null};
+const TABS=["Overview","Providers","Routing","Health","Endpoints","Tester"];
+const toast=m=>{const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2600)};
+async function api(a,body){
+  const r=await fetch("/api/admin?a="+a,{method:body===undefined?"GET":"POST",headers:{"Content-Type":"application/json","X-Requested-With":"anv-admin"},body:body===undefined?undefined:JSON.stringify(body),credentials:"same-origin"});
+  const d=await r.json().catch(()=>({}));
+  if(r.status===401&&a!=="login"){showLogin();throw new Error("Please sign in")}
+  if(!r.ok)throw new Error(d.error||r.status); return d;
+}
+function showLogin(m){$("#app").hidden=true;$("#login").hidden=false;$("#lerr").textContent=m||"";clearInterval(S.timer)}
+async function boot(){const me=await api("me");if(!me.configured)return showLogin("ADMIN_TOKEN is not set in Vercel yet.");if(!me.authed)return showLogin();$("#login").hidden=true;$("#app").hidden=false;go(S.tab)}
+$("#lf").onsubmit=async e=>{e.preventDefault();try{await api("login",{token:$("#tok").value});$("#tok").value="";boot()}catch(er){$("#lerr").textContent=er.message}};
+$("#out").onclick=async()=>{await api("logout",{});showLogin()};
+$("#nav").innerHTML=TABS.map(t=>`<button data-t="${t}">${t}</button>`).join("");
+$("#nav").onclick=e=>{const t=e.target.dataset.t;if(t)go(t)};
+async function go(t){
+  S.tab=t;clearInterval(S.timer);document.querySelectorAll("#nav button").forEach(b=>b.setAttribute("aria-current",b.dataset.t===t));
+  try{const st=await api("state");Object.assign(S,{cfg:st.cfg,health:st.health,breaker:st.breaker,ops:st.ops,persistent:st.persistent,storeError:st.storeError,siteUrl:st.siteUrl});await V[t]()}catch(e){$("#main").innerHTML=`<div class="warn">${esc(e.message)}</div>`}
+}
+const P=()=>Object.values(S.cfg.providers);
+const status=id=>{const it=(S.health?.items||[]).filter(x=>x.id===id&&x.domain!=="health");if(!it.length)return["","unknown"];const ok=it.filter(x=>x.ok).length;return ok===it.length?["up","operational"]:ok?["part","partial"]:["down","down"]};
+const tripped=id=>S.breaker[id]?.until>Date.now();
+const storeNote=()=>S.persistent?"":`<div class="warn"><b>Storage not connected.</b> Settings and usage are kept in memory and will reset on cold starts. In Vercel go to Storage, add <b>Upstash Redis</b> and connect it to this project, then redeploy.${S.storeError?"<br>Last storage error: "+esc(S.storeError):""}</div>`;
+
+const V={};
+V.Overview=async()=>{
+  const us=await api("usage"),agg={};
+  for(const [k,v] of Object.entries(us.totals)){const [p,,f]=k.split("|");const a=agg[p]||={req:0,err:0,ms:0};a[f]+=+v}
+  const days=us.days.map(d=>{let req=0,err=0;for(const [k,v] of Object.entries(d)){if(k.endsWith("|req"))req+=+v;if(k.endsWith("|err"))err+=+v}return{day:d.day,req,err}});
+  const max=Math.max(1,...days.map(d=>d.req)),tot=days.reduce((s,d)=>s+d.req,0),te=days.reduce((s,d)=>s+d.err,0);
+  const items=S.health?.items||[],bad=items.filter(x=>!x.ok).length;
+  $("#main").innerHTML=`${storeNote()}
+  <div class="cards">
+   <div class="c"><h3>Requests (7 days)</h3><div class="big">${tot}</div><div class="muted sm">${te} failed${tot?` (${(te/tot*100).toFixed(1)}%)`:""}</div></div>
+   <div class="c"><h3>Providers</h3><div class="big">${P().filter(p=>p.enabled!==false).length}<span class="muted sm"> / ${P().length} enabled</span></div></div>
+   <div class="c"><h3>Last health check</h3><div class="big">${S.health?(bad?`<span style="color:#ff6b6b">${bad} issue${bad>1?"s":""}</span>`:"All good"):"Not run"}</div><div class="muted sm">${S.health?new Date(S.health.t).toLocaleString():"Open the Health tab"}</div></div>
+   <div class="c"><h3>Storage</h3><div class="big">${S.persistent?"Upstash":"Memory"}</div><div class="muted sm">${S.persistent?"Persistent":"Resets on cold start"}</div></div>
+  </div>
+  <div class="c"><h3>Routing now</h3><div class="cards">${S.cfg&&Object.entries(S.cfg.domains).map(([d,c])=>{const act=(c.mode==="manual"?[c.manual]:c.order).filter(id=>S.cfg.providers[id]?.enabled!==false&&!tripped(id))[0]||"none";return`<div><b style="text-transform:capitalize">${d}</b><div class="muted sm">${c.mode==="auto"?"Auto failover":c.mode==="manual"?"Manual":"Merge all"}</div><div><span class="dot ${act==="none"?"down":"up"}"></span>${esc(act)}</div></div>`}).join("")}</div></div>
+  <div class="c"><h3>Requests per day</h3><div class="bars">${days.map(d=>`<div class="bar" title="${d.req} requests, ${d.err} failed"><small class="muted">${d.req}</small><i style="height:${d.req/max*100}%"><b style="height:${d.req?d.err/d.req*100:0}%"></b></i><small class="muted">${d.day.slice(5)}</small></div>`).join("")}</div><div class="muted sm">Red = failed requests</div></div>
+  <div class="c scroll"><h3>Usage by provider (all time)</h3><table><tr><th>Provider</th><th>Requests</th><th>Errors</th><th>Avg latency</th></tr>${Object.entries(agg).map(([p,a])=>`<tr><td>${esc(p)}</td><td>${a.req}</td><td>${a.err}</td><td>${a.req-a.err>0?Math.round(a.ms/(a.req-a.err))+" ms":"-"}</td></tr>`).join("")||'<tr><td colspan="4" class="muted">No traffic recorded yet.</td></tr>'}</table></div>
+  <div class="c scroll"><h3>Recent requests</h3><table><tr><th>Time</th><th>Provider</th><th>Section</th><th>Operation</th><th>Result</th><th>ms</th></tr>${us.log.slice(0,40).map(l=>`<tr><td>${new Date(l.t).toLocaleTimeString()}</td><td>${esc(l.p)}</td><td>${esc(l.d)}</td><td>${esc(l.o)}</td><td>${l.ok?'<span class="tag ok">ok</span>':`<span class="tag no">fail</span> <span class="muted sm">${esc(l.e||"")}</span>`}</td><td>${l.ms}</td></tr>`).join("")||'<tr><td colspan="6" class="muted">Nothing yet.</td></tr>'}</table></div>`;
+  S.timer=setInterval(()=>go("Overview"),30000);
+};
+
+V.Providers=()=>{
+  $("#main").innerHTML=`${storeNote()}<div class="row sb"><h2 style="margin:0">Providers</h2><button class="btn red" data-act="add">+ Add provider</button></div>
+  <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${P().map(p=>{const [cls,txt]=status(p.id);const n=Object.keys(p.ops||{}).length;return`<div class="c" data-id="${esc(p.id)}">
+   <div class="row sb"><b><span class="dot ${cls}"></span>${esc(p.name||p.id)}</b><span class="tag">${p.enabled!==false?"enabled":"disabled"}</span></div>
+   <div class="muted sm" style="word-break:break-all">${esc(p.base)}</div>
+   <div class="sm" style="margin:.4rem 0">${n} operations mapped · ${txt}${tripped(p.id)?' · <span style="color:#ff6b6b">paused by failover</span>':""}<br>${p.auth?.env?(p.keySet?`<span class="tag ok">key ${esc(p.auth.env)} set</span>`:`<span class="tag no">env ${esc(p.auth.env)} missing</span>`):'<span class="tag">no authentication</span>'}</div>
+   <div class="row"><button class="btn sm" data-act="toggle">${p.enabled!==false?"Disable":"Enable"}</button><button class="btn sm" data-act="edit">Edit</button><button class="btn sm" data-act="test">Test</button>${tripped(p.id)?'<button class="btn sm" data-act="reset">Resume</button>':""}${p.builtin?"":'<button class="btn sm bad" data-act="del">Delete</button>'}</div></div>`}).join("")}</div>
+  <div class="muted sm">Keys are never stored here. Each provider reads its key from a Vercel environment variable you name.</div>`;
+};
+async function saveCfg(msg){try{const r=await api("save",{providers:S.cfg.providers,domains:S.cfg.domains});S.cfg=r.cfg;toast(msg||"Saved");go(S.tab)}catch(e){toast(e.message)}}
+$("#main").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;const act=b.dataset.act,id=b.closest("[data-id]")?.dataset.id;
+  if(act==="add")return editor();
+  if(act==="edit")return editor(id);
+  if(act==="toggle"){S.cfg.providers[id].enabled=S.cfg.providers[id].enabled===false;return saveCfg()}
+  if(act==="del"){if(!confirm(`Delete provider "${id}"?`))return;delete S.cfg.providers[id];for(const d of Object.values(S.cfg.domains)){d.order=d.order.filter(x=>x!==id);if(d.manual===id)d.manual=""}return saveCfg("Deleted")}
+  if(act==="reset"){await api("reset",{id});toast("Resumed");return go(S.tab)}
+  if(act==="test"){S.testP=id;return go("Tester")}
+  if(act==="up"||act==="down"){const d=b.dataset.d,o=S.cfg.domains[d].order,i=o.indexOf(b.dataset.p),j=i+(act==="up"?-1:1);if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];return V.Routing()}
+  if(act==="runhealth"){b.disabled=true;b.textContent="Checking…";try{S.health=await api("health",{});V.Health()}catch(er){toast(er.message)}}
+  if(act==="discover")return discover();
+  if(act==="use"){const row=b.closest("tr"),op=row.querySelector("select").value,prov=$("#epProv").value,i=+row.dataset.i,ep=S.disc.endpoints[i];const params=(ep.params||[]).map(x=>`${x}={${x}}`).join("&");S.cfg.providers[prov].ops[op]=ep.path+(params?"?"+params:"");return saveCfg(`Mapped ${op}`)}
+  if(act==="runtest")return runTest();
+});
+
+function editor(id){
+  const p=id?JSON.parse(JSON.stringify(S.cfg.providers[id])):{id:"",name:"",base:"https://",enabled:true,origin:false,health:"",auth:{type:"header",name:"X-API-Key",env:""},ops:{}};
+  const bi=!!p.builtin,groups={};Object.entries(S.ops).forEach(([op,m])=>(groups[m.d]||=[]).push([op,m]));
+  $("#dlg").innerHTML=`<form class="form" id="pf"><div class="row sb"><h3 style="margin:0">${id?"Edit":"Add"} provider</h3><button type="button" class="btn sm" id="dx">Close</button></div>
+  <div class="g2"><label>ID<input name="id" value="${esc(p.id)}" ${id?"disabled":""} placeholder="my-provider" pattern="[a-z0-9\\-]{2,24}" required></label><label>Display name<input name="name" value="${esc(p.name)}" ${bi?"disabled":""}></label></div>
+  <label>Base URL<input name="base" value="${esc(p.base)}" ${bi?"disabled":""} placeholder="https://api.example.com" required></label>
+  <div class="g2"><label>Authentication<select name="atype" ${bi?"disabled":""}>${["none","header","bearer","query"].map(t=>`<option ${p.auth?.type===t?"selected":""}>${t}</option>`).join("")}</select></label>
+  <label>Header / parameter name<input name="aname" value="${esc(p.auth?.name)}" ${bi?"disabled":""} placeholder="X-API-Key"></label>
+  <label>Env variable holding the key<input name="aenv" value="${esc(p.auth?.env)}" ${bi?"disabled":""} placeholder="MY_API_KEY"></label>
+  <label>Health path<input name="health" value="${esc(p.health)}" ${bi?"disabled":""} placeholder="/ping"></label></div>
+  <label class="row"><input type="checkbox" name="origin" style="width:auto" ${p.origin?"checked":""} ${bi?"disabled":""}> Send this site’s address as Origin (only if the provider requires domain-bound keys)</label>
+  <h4 style="margin:.4rem 0 0">Operations <small class="muted">URL templates starting with /. Use {q} {page} {id} {slug} {ep} {se} {country} {resolution}. Leave blank if not supported.</small></h4>
+  ${Object.entries(groups).map(([d,list])=>`<div><b style="text-transform:capitalize">${d}</b><div class="g2">${list.map(([op,m])=>`<label>${op}<small>${esc(m.v)}</small><input data-op="${op}" value="${esc(p.ops?.[op]||"")}" placeholder="/path?x={q}"></label>`).join("")}</div></div>`).join("")}
+  <div class="row"><button class="btn red" type="submit">Save provider</button></div></form>`;
+  $("#dlg").showModal();$("#dx").onclick=()=>$("#dlg").close();
+  $("#pf").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target),pid=id||f.get("id");const ops={};document.querySelectorAll("#pf [data-op]").forEach(i=>{if(i.value.trim())ops[i.dataset.op]=i.value.trim()});
+    S.cfg.providers[pid]=bi?{...p,ops}:{id:pid,name:f.get("name"),base:f.get("base"),enabled:p.enabled,origin:f.get("origin")==="on",health:f.get("health"),auth:{type:f.get("atype"),name:f.get("aname"),env:f.get("aenv")},ops};
+    $("#dlg").close();await saveCfg("Provider saved")};
+}
+
+V.Routing=()=>{
+  const names={movies:"Movies and shows",anime:"Anime",livetv:"Live TV",sports:"Live sports"};
+  $("#main").innerHTML=`${storeNote()}<div class="muted sm"><b>Auto failover</b>: tries providers in the order below and skips broken ones. <b>Manual</b>: only the chosen provider is used. <b>Merge all</b>: combines results from every enabled provider. Public pages may take up to a minute to reflect changes (CDN cache).</div>
+  <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">${Object.entries(S.cfg.domains).map(([d,c])=>`<div class="c"><h3>${names[d]}</h3>
+   <select data-d="${d}" data-f="mode">${[["auto","Auto failover"],["manual","Manual (one provider)"],["merge","Merge all providers"]].map(([v,l])=>`<option value="${v}" ${c.mode===v?"selected":""}>${l}</option>`).join("")}</select>
+   <div style="margin:.6rem 0 .3rem" class="muted sm">${c.mode==="manual"?"Use this provider":"Priority order"}</div>
+   ${c.mode==="manual"?`<select data-d="${d}" data-f="manual">${c.order.map(id=>`<option value="${id}" ${c.manual===id?"selected":""}>${esc(S.cfg.providers[id]?.name||id)}</option>`).join("")}</select>`
+   :c.order.map((id,i)=>`<div class="ord"><span class="muted">${i+1}</span><span style="flex:1"><span class="dot ${status(id)[0]}"></span>${esc(S.cfg.providers[id]?.name||id)} ${S.cfg.providers[id]?.enabled===false?'<span class="tag">disabled</span>':""}${tripped(id)?'<span class="tag no">paused</span>':""}</span><button class="btn sm" data-act="up" data-d="${d}" data-p="${id}">↑</button><button class="btn sm" data-act="down" data-d="${d}" data-p="${id}">↓</button></div>`).join("")||'<div class="muted sm">No provider supports this section yet.</div>'}</div>`).join("")}</div>
+  <div class="row"><button class="btn red" id="saveR">Save routing</button></div>`;
+  document.querySelectorAll("#main select[data-f]").forEach(s=>s.onchange=()=>{S.cfg.domains[s.dataset.d][s.dataset.f]=s.value;V.Routing()});
+  $("#saveR").onclick=()=>saveCfg("Routing saved");
+};
+
+V.Health=()=>{
+  const items=S.health?.items||[];
+  $("#main").innerHTML=`<div class="row sb"><div><h2 style="margin:0">Live health</h2><div class="muted sm">${S.health?"Last run: "+new Date(S.health.t).toLocaleString():"Not run yet"}. Each provider is probed once per section it supports.</div></div>
+   <div class="row"><label class="row sm"><input type="checkbox" id="auto" style="width:auto"> Auto every 30s</label><button class="btn red" data-act="runhealth">Check now</button></div></div>
+  <div class="c scroll"><table><tr><th>Provider</th><th>Section</th><th>Probe</th><th>Status</th><th>Latency</th><th>Items</th><th>Detail</th></tr>${items.map(x=>`<tr><td>${esc(x.id)}</td><td>${esc(x.domain)}</td><td class="muted">${esc(x.op)}</td><td>${x.ok?'<span class="tag ok">up</span>':`<span class="tag no">down${x.status?" "+x.status:""}</span>`}</td><td>${x.ms} ms</td><td>${x.ok&&x.domain!=="health"?(x.count?x.count:'<span style="color:var(--warn)">0 (empty)</span>'):"-"}</td><td class="muted sm">${esc(x.error||"")}</td></tr>`).join("")||'<tr><td colspan="7" class="muted">Press “Check now”.</td></tr>'}</table></div>
+  <div class="muted sm">“Empty” means the provider answered but returned no items, which is usually why a section looks blank. Use the Tester tab to inspect the raw response.</div>`;
+  $("#auto").onchange=e=>{clearInterval(S.timer);if(e.target.checked)S.timer=setInterval(async()=>{try{S.health=await api("health",{});V.Health();$("#auto").checked=true}catch{}},30000)};
+};
+
+V.Endpoints=()=>{
+  const id=S.epP&&S.cfg.providers[S.epP]?S.epP:P()[0].id,p=S.cfg.providers[id];
+  $("#main").innerHTML=`<div class="row"><h2 style="margin:0">Endpoints</h2><select id="epProv" style="width:auto">${P().map(x=>`<option value="${x.id}" ${x.id===id?"selected":""}>${esc(x.name||x.id)}</option>`).join("")}</select></div>
+  <div class="c scroll"><h3>Mapped operations</h3><table><tr><th>Section</th><th>Operation</th><th>Template</th></tr>${Object.entries(S.ops).map(([op,m])=>`<tr><td>${m.d}</td><td>${op}</td><td>${p.ops?.[op]?`<code>${esc(p.ops[op])}</code>`:'<span class="muted">not mapped</span>'}</td></tr>`).join("")}</table></div>
+  <div class="c"><h3>Discover endpoints</h3><div class="muted sm" style="margin-bottom:.6rem">Reads the provider’s <code>/openapi.json</code> or <code>/api-catalog.json</code> and lists every route so you can map them.</div>
+   <div class="row"><input id="dbase" value="${esc(p.base)}" style="flex:1;min-width:240px"><button class="btn red" data-act="discover">Discover</button></div><div id="dres" style="margin-top:.8rem"></div></div>`;
+  $("#epProv").onchange=e=>{S.epP=e.target.value;V.Endpoints()};
+  if(S.disc&&S.disc.for===id)renderDisc();
+};
+async function discover(){
+  const el=$("#dres");el.innerHTML='<span class="muted">Looking…</span>';
+  try{const d=await api("discover",{base:$("#dbase").value});S.disc={...d,for:$("#epProv").value};renderDisc()}catch(e){el.innerHTML=`<div class="warn">${esc(e.message)}</div>`}
+}
+function renderDisc(){
+  const d=S.disc,ops=Object.keys(S.ops);
+  $("#dres").innerHTML=`<div class="muted sm">${d.total} routes found in ${esc(d.source)}${d.total>d.endpoints.length?` (showing ${d.endpoints.length})`:""}</div><input id="dfilter" placeholder="Filter routes…" style="margin:.5rem 0"><div class="scroll"><table id="dt"><tr><th>Method</th><th>Path</th><th>Info</th><th>Map to</th></tr>${d.endpoints.map((x,i)=>`<tr data-i="${i}" data-q="${esc((x.path+" "+x.summary+" "+x.tag).toLowerCase())}"><td>${x.method}</td><td><code>${esc(x.path)}</code><div class="muted sm">${esc((x.params||[]).join(", "))}</div></td><td class="muted sm">${esc(x.tag)} ${esc(x.summary).slice(0,80)}</td><td><select style="width:130px">${ops.map(o=>`<option>${o}</option>`).join("")}</select> <button class="btn sm" data-act="use">Use</button></td></tr>`).join("")}</table></div><div class="muted sm">“Use” fills a starting template from the route’s parameters. Edit the provider afterwards if a parameter name differs (for example <code>query={q}</code>).</div>`;
+  $("#dfilter").oninput=e=>{const q=e.target.value.toLowerCase();document.querySelectorAll("#dt tr[data-q]").forEach(r=>r.hidden=!r.dataset.q.includes(q))};
+}
+
+V.Tester=()=>{
+  const id=S.testP&&S.cfg.providers[S.testP]?S.testP:P()[0].id;
+  $("#main").innerHTML=`<h2 style="margin:0">Tester</h2><div class="muted sm">Runs one operation and shows exactly what the provider returns. Paste the output to your developer if a section looks wrong.</div>
+  <div class="c form"><div class="g2"><label>Provider<select id="tp">${P().map(x=>`<option value="${x.id}" ${x.id===id?"selected":""}>${esc(x.name||x.id)}</option>`).join("")}</select></label><label>Operation<select id="to"></select></label></div>
+  <label>Variables (JSON) <small id="tv"></small><textarea id="tj" rows="3">{"page":1,"q":"man","country":"ke"}</textarea></label><div class="row"><button class="btn red" data-act="runtest">Run test</button></div><div id="tres"></div></div>`;
+  const fillOps=()=>{const p=S.cfg.providers[$("#tp").value];$("#to").innerHTML=Object.keys(p.ops||{}).map(o=>`<option ${o==="sports-live"?"selected":""}>${o}</option>`).join("");hint()};
+  const hint=()=>{$("#tv").textContent="uses: "+(S.ops[$("#to").value]?.v||"nothing")};
+  $("#tp").onchange=fillOps;$("#to").onchange=hint;fillOps();
+};
+async function runTest(){
+  let vars;try{vars=JSON.parse($("#tj").value||"{}")}catch{return toast("Variables must be valid JSON")}
+  $("#tres").innerHTML='<span class="muted">Running…</span>';
+  try{const r=await api("test",{provider:$("#tp").value,op:$("#to").value,vars});
+    $("#tres").innerHTML=`<div class="row"><span class="tag ${r.ok?"ok":"no"}">${r.ok?"OK":"Failed"}${r.status?" "+r.status:""}</span><span class="muted sm">${r.ms} ms</span>${r.ok?`<span class="muted sm">${r.count} items</span>`:""}</div><div class="muted sm" style="word-break:break-all;margin:.4rem 0">${esc(r.url)}</div>${r.ok?`<div class="muted sm">Top-level keys: ${esc((r.topKeys||[]).join(", "))}</div><pre>${esc(r.sample)}</pre>`:`<div class="warn">${esc(r.error)}</div>`}`}
+  catch(e){$("#tres").innerHTML=`<div class="warn">${esc(e.message)}</div>`}
+}
+boot();
+</script>
+</body>
+</html>

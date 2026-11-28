@@ -53,7 +53,7 @@ const WL = {
   has(it) { return this.all().some((x) => x.k === it.k && x.id === it.id); },
   toggle(it) {
     const a = this.all(), i = a.findIndex((x) => x.k === it.k && x.id === it.id);
-    if (i >= 0) a.splice(i, 1); else a.unshift({ k: it.k, id: it.id, title: it.title, poster: it.poster, type: it.type, year: it.year, slug: it.slug, country: it.country, media: it.media, sub: it.sub, status: it.status });
+    if (i >= 0) a.splice(i, 1); else a.unshift({ k: it.k, id: it.id, title: it.title, p: it.p, poster: it.poster, type: it.type, year: it.year, slug: it.slug, country: it.country, media: it.media, sub: it.sub, status: it.status });
     try { localStorage.setItem("anv:wl", JSON.stringify(a)); } catch { toast("Storage is blocked in this browser"); }
     return i < 0;
   },
@@ -192,7 +192,7 @@ function viewHome(root) {
     startHero(hero, list);
   }).finally(hideSplash);
   const add = (...a) => root.append(mkRow(...a));
-  const cw = CW.all().map((x) => ({ k: x.k, id: x.id, title: x.title, poster: x.poster, type: x.type, year: x.year, slug: x.slug, pct: x.dur ? Math.min(100, (x.pos / x.dur) * 100) : 0, resume: { se: x.se, ep: x.ep, max: x.max, label: x.label, type: x.audio } }));
+  const cw = CW.all().map((x) => ({ k: x.k, id: x.id, p: x.p, title: x.title, poster: x.poster, type: x.type, year: x.year, slug: x.slug, pct: x.dur ? Math.min(100, (x.pos / x.dur) * 100) : 0, resume: { se: x.se, ep: x.ep, max: x.max, label: x.label, type: x.audio } }));
   if (cw.length) add("Continue watching", null, { items: cw });
   add("Latest movies", { s: "latest-movies" }, { auto: -1 });
   add("Latest shows", { s: "latest-series" }, { auto: 1 });
@@ -323,7 +323,7 @@ async function openDetail(it) {
   const tok = ++dTok;
   box.innerHTML = `<div class="dhero"><div class="ph" style="width:190px">${esc(it.title)}</div><div style="flex:1"><h2>${esc(it.title)}</h2><div class="dsk" style="width:60%"></div><div class="dsk"></div><div class="dsk" style="width:85%"></div></div></div>`;
   showD(dlg); RV.add(it);
-  let d = {}; try { d = await api("/api/detail", { k: it.k, id: it.id, slug: it.slug || "" }); } catch (e) { d = { error: e.message }; }
+  let d = {}; try { d = await api("/api/detail", { k: it.k, id: it.id, slug: it.slug || "", p: it.p || "", title: it.title, year: it.year || "" }); } catch (e) { d = { error: e.message }; }
   if (tok === dTok && dlg.open) renderDetail(it, d);
 }
 function renderDetail(it, d) {
@@ -364,26 +364,34 @@ function renderDetail(it, d) {
 
 /* ---------- Player ---------- */
 const pl = $("#player"), vid = $("#vid"), frm = $("#frm"), st = $("#status"), ld = $("#ld"), pb = $("#playBtn");
-let nextT, cur = null, timer = null, hls = null, recovering = false, fails = 0, lastSave = 0;
+let stallT, stalls = 0, lastS, nextT, cur = null, timer = null, hls = null, recovering = false, fails = 0, lastSave = 0;
 const pkey = () => `anv:p:${cur.k}:${cur.id}:${cur.se || 0}-${cur.ep || 0}`;
 const store = { get(k) { try { return +localStorage.getItem(k) || 0; } catch { return 0; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} }, del(k) { try { localStorage.removeItem(k); } catch {} } };
 const resumable = () => cur && (cur.k === "title" || cur.k === "anime");
-const cwOf = () => ({ k: cur.k, id: cur.id, title: cur.title, poster: cur.poster, type: cur.type, year: cur.year, slug: cur.slug, se: cur.se, ep: cur.ep, max: cur.max, label: cur.label, audio: cur.audio });
+const cwOf = () => ({ k: cur.k, id: cur.id, p: cur.p, title: cur.title, poster: cur.poster, type: cur.type, year: cur.year, slug: cur.slug, se: cur.se, ep: cur.ep, max: cur.max, label: cur.label, audio: cur.audio });
 const epLabel = (k, se, ep) => `${k === "anime" ? "" : "S" + se + " · "}E${ep}`;
 function saveProg() { // remembers position + feeds the Continue watching row
   if (!resumable()) return; const pos = vid.currentTime, dur = vid.duration; store.set(pkey(), pos);
   if (!isFinite(dur) || pos < 10) return;
   const a = CW.all().filter((x) => !(x.k === cur.k && x.id === cur.id)); if (dur - pos > 45) a.unshift({ ...cwOf(), pos, dur }); CW.set(a);
 }
+function armStall() { // if nothing loads for 15s, ask the server for the next provider
+  clearTimeout(stallT); if (!lastS || lastS.type === "embed") return;
+  stallT = setTimeout(() => {
+    if (!cur || vid.readyState >= 2) return;
+    if (++stalls > 2) { ld.classList.add("off"); st.textContent = "This source isn’t responding. Try a lower quality, another title, or tap Report."; return; }
+    (cur.skip ||= []).push(lastS.provider); st.textContent = "Source is slow, trying another…"; refresh();
+  }, 15000);
+}
 function openPlayer(it, o = {}) {
-  cur = { ...it, se: o.se, ep: o.ep, audio: o.type || "sub", max: o.max, label: o.label }; fails = 0; pb.hidden = true; clearTimeout(nextT); if (isMedia(it)) RV.add(it);
+  cur = { ...it, se: o.se, ep: o.ep, audio: o.type || "sub", max: o.max, label: o.label }; fails = 0; stalls = 0; clearTimeout(stallT); pb.hidden = true; clearTimeout(nextT); if (isMedia(it)) RV.add(it);
   $("#pTitle").textContent = it.title; $("#pMeta").textContent = [o.label, sub(it)].filter(Boolean).join(" · ");
   $("#res").hidden = $("#dl").hidden = it.k !== "title"; $("#next").hidden = !(o.max && o.ep < o.max);
   showD(pl); refresh(resumable() ? store.get(pkey()) : 0);
 }
 async function fetchPlay() {
   if (cur.k === "sport") { if (!cur.media) throw new Error("No live stream is available for this match yet"); return { url: cur.media, type: /m3u8|hls/i.test(cur.media) ? "hls" : "file" }; }
-  const p = { k: cur.k, id: cur.id }; if (cur.k === "title") p.resolution = $("#res").value;
+  const p = { k: cur.k, id: cur.id, p: cur.p || "", title: cur.title, year: cur.year || "" }; if (cur.skip?.length) p.skip = cur.skip.join(","); if (cur.k === "title") p.resolution = $("#res").value;
   if (cur.se) p.se = cur.se; if (cur.ep) p.ep = cur.ep; if (cur.k === "anime") p.type = cur.audio; if (cur.country) p.country = cur.country;
   return api("/api/play", p);
 }
@@ -404,13 +412,14 @@ async function refresh(resumeAt) {
   try {
     const s = await fetchPlay(); clearTimeout(timer);
     if (s.expiresIn) timer = setTimeout(() => refresh(), Math.max(30, s.expiresIn - 90) * 1000); // refresh ~90s before expiry
-    setSource(s, pos, play);
+    lastS = s; setSource(s, pos, play); armStall();
   } catch (e) { ld.classList.add("off"); st.textContent = `Couldn’t start playback (${e.message}).`; }
   finally { recovering = false; }
 }
-function onFail() { if (!cur || !(vid.getAttribute("src") || hls)) return; if (++fails > 3) { ld.classList.add("off"); st.textContent = "Playback keeps failing. Try another quality or title."; return; } refresh(); }
+function onFail() { if (!cur || !(vid.getAttribute("src") || hls)) return;
+  if (lastS && lastS.type === "file" && !lastS.triedHls && window.Hls?.isSupported() && /m3u8|manifest|playlist/i.test(lastS.url)) { lastS.triedHls = true; setSource({ url: lastS.url, type: "hls" }, 0, true); return; } if (++fails > 3) { ld.classList.add("off"); st.textContent = "Playback keeps failing. Try another quality or title."; return; } if (fails >= 2 && lastS?.provider) (cur.skip ||= []).push(lastS.provider); refresh(); }
 vid.addEventListener("error", onFail);
-vid.addEventListener("playing", () => { fails = 0; ld.classList.add("off"); pb.hidden = true; st.textContent = ""; });
+vid.addEventListener("playing", () => { fails = 0; stalls = 0; clearTimeout(stallT); ld.classList.add("off"); pb.hidden = true; st.textContent = ""; });
 vid.addEventListener("waiting", () => ld.classList.remove("off"));
 vid.addEventListener("canplay", () => ld.classList.add("off"));
 vid.addEventListener("timeupdate", () => { if (!resumable() || Date.now() - lastSave < 5000) return; lastSave = Date.now(); saveProg(); });
@@ -427,7 +436,7 @@ $("#dl").onclick = async () => { try { const s = await api("/api/play", { k: cur
 $("#pip").onclick = () => document.pictureInPictureEnabled && !vid.hidden && vid.requestPictureInPicture().catch(() => {});
 const closePlayer = () => pl.close();
 $("#pclose").onclick = closePlayer; pl.addEventListener("click", (e) => { if (e.target === pl) closePlayer(); });
-pl.addEventListener("close", () => { clearTimeout(nextT); if (cur && vid.currentTime > 5) saveProg(); cur = null; clean(); vid.pause(); vid.removeAttribute("src"); vid.load(); frm.removeAttribute("src"); frm.hidden = true; vid.hidden = false; });
+pl.addEventListener("close", () => { clearTimeout(nextT); clearTimeout(stallT); if (cur && vid.currentTime > 5) saveProg(); cur = null; clean(); vid.pause(); vid.removeAttribute("src"); vid.load(); frm.removeAttribute("src"); frm.hidden = true; vid.hidden = false; });
 
 /* ---------- Extras: back button, footer, offline, install ---------- */
 let skipBack = 0, ignorePop = 0; // the phone Back button closes the player/details first

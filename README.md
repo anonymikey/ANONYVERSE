@@ -1,13 +1,19 @@
 # ANONYVERSE
 
-Netflix-style streaming front-end (static) + Vercel Functions that keep `FRAMEX_API_KEY` on the server.
+Netflix-style streaming front-end (static) + Vercel Functions. API keys stay on the server.
 
-- `index.html`, `app.js`, `styles.css`: the app. `docs.html`: user documentation (served at `/docs`).
-- `api/browse.js`: lists (movies, shows, anime, live TV, sports, genres, search)
-- `api/detail.js`: details, cast and episodes
-- `api/play.js`: short-lived playback URLs
+## Environment variables (Vercel > Settings > Environment Variables)
+| Name | Purpose |
+|---|---|
+| `FRAMEX_API_KEY` | FRAMEX key (built-in provider) |
+| `ADMIN_TOKEN` | Admin panel login token (use 24+ random characters) |
+| `SITE_URL` | Optional. Your canonical site, e.g. `https://anonymiketech.com` |
+| `KV_REST_API_URL`, `KV_REST_API_TOKEN` | Added automatically when you connect **Upstash Redis** (Vercel > Storage). Needed so admin settings and usage persist |
+| any provider key | Each extra provider reads its key from the env var name you give it in the admin panel |
 
-## Deploy
-1. Push to GitHub, import in Vercel (Framework preset: Other, no build command).
-2. Set `FRAMEX_API_KEY` in Environment Variables, then redeploy.
-3. Bind the FRAMEX key to your site's root domain.
+## Admin panel
+Open `/admin`. Providers, routing/failover, live health, endpoints, usage and a tester. Settings are stored in Redis.
+
+## Routes
+- `/api/browse`, `/api/detail`, `/api/play`: public, routed through the providers you configure
+- `/api/admin`: admin only (signed cookie)
